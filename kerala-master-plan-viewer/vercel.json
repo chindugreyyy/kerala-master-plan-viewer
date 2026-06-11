@@ -31,7 +31,7 @@
       ]
     },
     {
-      "source": "/data/(.*\\.(tif|tiff))",
+      "source": "/data/(.*)",
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
