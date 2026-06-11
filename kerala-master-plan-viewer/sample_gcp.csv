@@ -1,0 +1,33 @@
+# Sample Ground Control Points (GCP) file
+# Format: pixel_x,pixel_y,longitude,latitude
+# 
+# Instructions:
+# 1. Open your scanned plan image in an image viewer
+# 2. Identify recognizable landmarks (road intersections, buildings, temples, rivers)
+# 3. Find the same landmarks on Google Maps / OpenStreetMap
+# 4. Record pixel coordinates (x,y) from the image
+# 5. Record longitude,latitude from the map
+# 6. Add at least 6-10 points spread across the map
+# 7. Save this file as {city_name}_gcp.csv
+#
+# Example for Thiruvananthapuram:
+# Top-left corner of image (approximate)
+# 50,80,76.9000,8.5600
+#
+# Railway station
+# 450,300,76.9361,8.4870
+#
+# Temple
+# 200,500,76.9412,8.4828
+#
+# Beach
+# 600,200,76.9490,8.5240
+#
+# Airport
+# 100,800,76.9190,8.4760
+#
+# Bus stand
+# 350,400,76.9366,8.5241
+#
+# --- Add your actual points below ---
+

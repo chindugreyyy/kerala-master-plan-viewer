@@ -1,0 +1,219 @@
+{
+  "cities": [
+    {
+      "name": "Thiruvananthapuram (Trivandrum)",
+      "center": [76.9366, 8.5241],
+      "zoom": 12
+    },
+    {
+      "name": "Kochi (Ernakulam / Cochin)",
+      "center": [76.2673, 9.9312],
+      "zoom": 12
+    },
+    {
+      "name": "Kozhikode (Calicut)",
+      "center": [75.7804, 11.2588],
+      "zoom": 12
+    },
+    {
+      "name": "Kollam (Quilon)",
+      "center": [76.6141, 8.8932],
+      "zoom": 12
+    },
+    {
+      "name": "Thrissur (Trichur)",
+      "center": [76.2144, 10.5276],
+      "zoom": 12
+    },
+    {
+      "name": "Kannur (Cannanore)",
+      "center": [75.3704, 11.8745],
+      "zoom": 12
+    },
+    {
+      "name": "Alappuzha (Alleppey)",
+      "center": [76.3388, 9.4981],
+      "zoom": 13
+    },
+    {
+      "name": "Palakkad (Palghat)",
+      "center": [76.6548, 10.7867],
+      "zoom": 12
+    },
+    {
+      "name": "Malappuram",
+      "center": [76.0703, 11.0735],
+      "zoom": 12
+    },
+    {
+      "name": "Ponnani",
+      "center": [75.9252, 10.7717],
+      "zoom": 13
+    },
+    {
+      "name": "Kasaragod",
+      "center": [75.0000, 12.5000],
+      "zoom": 12
+    },
+    {
+      "name": "Kottayam",
+      "center": [76.5222, 9.5916],
+      "zoom": 12
+    },
+    {
+      "name": "Pathanamthitta",
+      "center": [76.7902, 9.2683],
+      "zoom": 13
+    },
+    {
+      "name": "Idukki",
+      "center": [76.9410, 9.8477],
+      "zoom": 11
+    },
+    {
+      "name": "Wayanad",
+      "center": [76.1320, 11.6853],
+      "zoom": 11
+    },
+    {
+      "name": "Changanassery",
+      "center": [76.5366, 9.4420],
+      "zoom": 13
+    },
+    {
+      "name": "Cherthala",
+      "center": [76.3333, 9.6833],
+      "zoom": 13
+    },
+    {
+      "name": "Chalakudy",
+      "center": [76.3333, 10.3000],
+      "zoom": 13
+    },
+    {
+      "name": "Guruvayur",
+      "center": [76.0412, 10.5943],
+      "zoom": 13
+    },
+    {
+      "name": "Kalamassery",
+      "center": [76.3263, 10.0629],
+      "zoom": 13
+    },
+    {
+      "name": "Kanhangad",
+      "center": [75.1000, 12.3000],
+      "zoom": 13
+    },
+    {
+      "name": "Karunagappally",
+      "center": [76.5500, 9.0667],
+      "zoom": 13
+    },
+    {
+      "name": "Kayamkulam",
+      "center": [76.5000, 9.1667],
+      "zoom": 13
+    },
+    {
+      "name": "Kodungallur",
+      "center": [76.2000, 10.2167],
+      "zoom": 13
+    },
+    {
+      "name": "Kothamangalam",
+      "center": [76.6167, 10.0667],
+      "zoom": 13
+    },
+    {
+      "name": "Kunnamkulam",
+      "center": [76.0667, 10.6500],
+      "zoom": 13
+    },
+    {
+      "name": "Manjeri",
+      "center": [76.1167, 11.1167],
+      "zoom": 13
+    },
+    {
+      "name": "Maradu",
+      "center": [76.3333, 9.8833],
+      "zoom": 13
+    },
+    {
+      "name": "Mattancherry",
+      "center": [76.2542, 9.9583],
+      "zoom": 13
+    },
+    {
+      "name": "Nileshwar",
+      "center": [75.1333, 12.2500],
+      "zoom": 13
+    },
+    {
+      "name": "North Paravur",
+      "center": [76.2167, 10.1500],
+      "zoom": 13
+    },
+    {
+      "name": "Ottappalam",
+      "center": [76.3833, 10.7667],
+      "zoom": 13
+    },
+    {
+      "name": "Payyannur",
+      "center": [75.2000, 12.1000],
+      "zoom": 13
+    },
+    {
+      "name": "Perinthalmanna",
+      "center": [76.2333, 10.9833],
+      "zoom": 13
+    },
+    {
+      "name": "Punalur",
+      "center": [76.9333, 9.0167],
+      "zoom": 13
+    },
+    {
+      "name": "Shoranur",
+      "center": [76.2833, 10.7667],
+      "zoom": 13
+    },
+    {
+      "name": "Taliparamba",
+      "center": [75.3500, 12.0333],
+      "zoom": 13
+    },
+    {
+      "name": "Thalassery (Tellicherry)",
+      "center": [75.4890, 11.7480],
+      "zoom": 13
+    },
+    {
+      "name": "Thrippunithura",
+      "center": [76.3500, 9.9500],
+      "zoom": 13
+    },
+    {
+      "name": "Tirur",
+      "center": [75.9167, 10.9167],
+      "zoom": 13
+    },
+    {
+      "name": "Vadakara (Vatakara)",
+      "center": [75.5833, 11.6000],
+      "zoom": 13
+    },
+    {
+      "name": "Vaikom",
+      "center": [76.4000, 9.7500],
+      "zoom": 13
+    },
+    {
+      "name": "Wadakkanchery",
+      "center": [76.2167, 10.3667],
+      "zoom": 13
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kerala Master Plan Viewer | Kerala First</title>
+  <meta name="description"
+    content="View georeferenced master plans and development plans for all cities and towns in Kerala on an interactive web map.">
+  <meta name="description" content="Interactive Kerala development plan viewer with GIS capabilities for all cities and towns.">
+  <meta name="keywords" content="Kerala master plan, Kerala development plan, GIS, Kerala cities, town planning, Kerala First">
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="Kerala Master Plan Viewer">
+  <meta property="og:description" content="View georeferenced development plans for all Kerala cities and towns.">
+  <meta property="og:url" content="https://keralafirst.co.in/master-plan-viewer/">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico">
+  <!-- OpenLayers CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.9.0/ol.css">
+  <!-- App CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <!-- Control panel (top-left) -->
+  <div id="controls">
+    <div id="controls-header">
+      <button id="menu-toggle" type="button" class="icon-btn" aria-label="Toggle Menu">☰</button>
+      <button id="theme-toggle" type="button" class="icon-btn" aria-label="Toggle Dark Mode">🌙</button>
+      <div class="slider-wrapper">
+        Opacity&nbsp;
+        <label for="opacity-slider" style="display: none;">Overlay Opacity</label>
+        <input id="opacity-slider" type="range" min="0" max="1" step="0.01" value="1" title="Overlay Opacity">
+      </div>
+    </div>
+
+    <div id="menu-content">
+      <h2>Kerala First — Master Plan Viewer</h2>
+      <p class="subtitle">All Kerala cities & towns development plans</p>
+      <label for="address-search">Search Address</label>
+      <div id="search-wrapper">
+        <input id="address-search" type="search" placeholder="Search for a place in Kerala…" autocomplete="off" aria-label="Search address">
+        <button id="address-search-clear" type="button" class="clear-btn" aria-label="Clear address search">×</button>
+        <ul id="search-results" role="listbox" aria-label="Search results"></ul>
+      </div>
+      <label for="city-search">City / Town</label>
+      <div id="city-search-wrapper">
+        <input id="city-search" type="search" placeholder="Search Kerala cities & towns…" autocomplete="off" aria-label="Search cities">
+        <button id="city-search-clear" type="button" class="clear-btn" aria-label="Clear city search">×</button>
+        <ul id="city-results" role="listbox" aria-label="City results"></ul>
+      </div>
+      <label>Compare</label>
+      <button id="swipe-toggle" type="button" class="active">⇔ Swipe On</button>
+      <label>Comments</label>
+      <button id="comments-toggle" type="button" class="no-city">💬 Show and Add Comments</button>
+    </div>
+  </div>
+
+  <!-- Bottom Left Controls -->
+  <div id="bottom-left-controls">
+    <div class="fab-row">
+      <button id="add-comment-fab" type="button" class="fab" title="Add Comment">💭</button>
+      <span class="fab-label">Add Comment</span>
+    </div>
+    <div class="fab-row">
+      <button id="basemap-toggle-btn" type="button" class="fab" title="Toggle Basemap">🗺️</button>
+      <span class="fab-label">Satellite</span>
+    </div>
+    <div class="fab-row">
+      <button id="geolocate-btn" type="button" class="fab" title="My Location">📍</button>
+      <span class="fab-label">Locate Me</span>
+    </div>
+    <div class="fab-row">
+      <button id="info-btn" type="button" class="fab" title="About & Disclaimer">ℹ️</button>
+      <span class="fab-label">Info</span>
+    </div>
+    <div class="fab-row">
+      <button id="submit-plan-btn" type="button" class="fab" title="Submit Official Plan">📤</button>
+      <span class="fab-label">Submit Plan</span>
+    </div>
+  </div>
+
+  <!-- Add-comment mode hint toast -->
+  <div id="add-comment-hint">Tap on map to place your comment</div>
+
+  <!-- "Select a city first" toast -->
+  <div id="city-required-toast">Select a city to comment</div>
+
+  <!-- "No data available" toast -->
+  <div id="no-data-toast">No master plan data yet</div>
+
+  <!-- Info Modal -->
+  <div id="info-modal" class="modal">
+    <div class="modal-content">
+      <button id="modal-close" type="button" class="modal-close" aria-label="Close">✕</button>
+      <h2>About Kerala Master Plan Viewer</h2>
+      <p>Kerala Master Plan Viewer is a web application that displays georeferenced development plans (master plans) of all cities and towns in Kerala on an interactive map. It is built for <strong>Kerala First</strong> to help citizens, planners, and researchers access planning information easily.</p>
+      
+      <h3>Two Types of Data</h3>
+      <p><strong>Official Master Plans:</strong> These are the actual government-approved development plans. They show future land use, zoning, roads, and infrastructure. They are the authoritative source.</p>
+      <p><strong>Current Land Use (Proxy):</strong> When no official plan is available, we show the <em>current</em> urban fabric from OpenStreetMap data. This includes buildings, roads, land use, and water bodies. It's useful for understanding the city today, but it's not a planning document.</p>
+      
+      <h3>What is a Master Plan?</h3>
+      <p>A Master Plan (or Development Plan) is a comprehensive document that guides the future growth and development of a city or town. It includes land use zones, road networks, public spaces, and infrastructure planning.</p>
+      
+      <h3>Disclaimer</h3>
+      <p><strong>Data Sources:</strong> Official plans are collected from Kerala State Town Planning Department, municipal corporations, and other government sources. Proxy data comes from OpenStreetMap contributors.</p>
+      <p><strong>Liability:</strong> The author takes no liability regarding the correctness, completeness, accuracy, or reliability of the data. Always verify with official government sources.</p>
+      <p><strong>Use at Your Own Risk:</strong> This tool is for informational purposes only. Consult official sources for authoritative planning information.</p>
+      
+      <h3>How to Contribute</h3>
+      <p>Have a master plan for your Kerala city/town? Click "Submit Plan" to send it to us. Plans must be georeferenced (GeoTIFF or web tiles) to be displayed.</p>
+    </div>
+  </div>
+
+  <!-- Submit Plan Modal -->
+  <div id="submit-plan-modal" class="modal">
+    <div class="modal-content" id="submit-plan-content">
+      <button id="submit-plan-modal-close" type="button" class="modal-close" aria-label="Close">✕</button>
+      <h2>Submit an Official Master Plan</h2>
+      <p style="font-size:13px; color:var(--muted-color); margin-bottom:12px;">
+        Help us add official Kerala master plans to the viewer. Submit a scanned plan, PDF, or georeferenced file.
+      </p>
+      <form id="submit-plan-form">
+        <label for="submit-city">City / Town *</label>
+        <select id="submit-city" required>
+          <option value="">Select a city...</option>
+        </select>
+        
+        <label for="submit-name">Your Name *</label>
+        <input id="submit-name" type="text" placeholder="Your full name" required>
+        
+        <label for="submit-email">Your Email *</label>
+        <input id="submit-email" type="email" placeholder="email@example.com" required>
+        
+        <label for="submit-phone">Phone (optional)</label>
+        <input id="submit-phone" type="text" placeholder="+91...">
+        
+        <label for="submit-source">Where did you get this plan? *</label>
+        <input id="submit-source" type="text" placeholder="e.g., Trivandrum Corporation Office, RTI response..." required>
+        
+        <label for="submit-plan-type">Document Type</label>
+        <select id="submit-plan-type">
+          <option value="scanned_pdf">Scanned PDF</option>
+          <option value="digital_pdf">Digital PDF</option>
+          <option value="geotiff">GeoTIFF (already georeferenced)</option>
+          <option value="cad">CAD file (DWG/DXF)</option>
+          <option value="image">Image (JPG/PNG)</option>
+          <option value="other">Other</option>
+        </select>
+        
+        <label for="submit-description">Description</label>
+        <textarea id="submit-description" placeholder="Describe the plan: year, type (DP/master plan), any notes..." rows="3"></textarea>
+        
+        <label for="submit-file">Upload File (optional, max 20MB)</label>
+        <input id="submit-file" type="file" accept=".pdf,.tif,.tiff,.jpg,.png,.dwg,.dxf">
+        
+        <div class="modal-form-actions">
+          <button type="submit" id="submit-plan-submit">Submit Plan</button>
+          <button type="button" id="submit-plan-cancel">Cancel</button>
+        </div>
+        <p id="submit-plan-status"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Comment context menu (right-click / long-press) -->
+  <div id="comment-context-menu">
+    <button id="context-menu-add" type="button">+ Add Comment</button>
+  </div>
+
+  <!-- Add comment form modal -->
+  <div id="comment-form-modal" class="modal">
+    <div class="modal-content" id="comment-form-content">
+      <button id="comment-form-close" type="button" class="modal-close" aria-label="Close">✕</button>
+      <h2>Add Comment</h2>
+      <form id="comment-form">
+        <label for="comment-name">Your Name (optional)</label>
+        <input id="comment-name" type="text" placeholder="Anonymous" maxlength="50" autocomplete="off">
+        <label for="comment-text">Comment *</label>
+        <textarea id="comment-text" placeholder="Share your thoughts about this plan…" maxlength="150" rows="4"></textarea>
+        <p id="comment-char-count">150 characters remaining</p>
+        <div class="modal-form-actions">
+          <button type="submit" id="comment-submit">Submit</button>
+          <button type="button" id="comment-cancel">Cancel</button>
+        </div>
+        <p id="comment-status"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Comment read popover -->
+  <div id="suggestion-popover">
+    <button id="popover-close" type="button" aria-label="Close">✕</button>
+    <div id="popover-content"></div>
+  </div>
+
+  <!-- Legend Panel -->
+  <div id="legend-panel">
+    <div id="legend-header">
+      <span id="legend-title">Legend</span>
+      <button id="legend-toggle" type="button">−</button>
+    </div>
+    <div id="legend-content"></div>
+  </div>
+
+  <!-- Data Source Indicator -->
+  <div id="data-source-indicator">
+    <span id="data-source-badge">No official plan loaded</span>
+  </div>
+
+  <!-- Proxy Loading Indicator -->
+  <div id="proxy-loading">Loading current land use data...</div>
+
+  <!-- Vertical swipe divider -->
+  <div id="swipe-handle"></div>
+
+  <!-- geotiff.js — required by ol.source.GeoTIFF -->
+  <script src="https://cdn.jsdelivr.net/npm/geotiff@3.0.5/dist-browser/geotiff.js"></script>
+  <!-- OpenLayers JS (full build) -->
+  <script src="https://cdn.jsdelivr.net/npm/ol@10.9.0/dist/ol.js"></script>
+  <!-- India Boundary Corrector -->
+  <script src="https://cdn.jsdelivr.net/npm/@india-boundary-corrector/openlayers-layer/dist/index.global.js"></script>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Proxy Layer JS (Current Land Use) -->
+  <script src="proxy-layer.js"></script>
+  <!-- App JS -->
+  <script src="main.js"></script>
+
+</body>
+
+</html>

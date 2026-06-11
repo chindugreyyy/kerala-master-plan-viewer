@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://keralafirst.co.in/master-plan-viewer/sitemap.xml

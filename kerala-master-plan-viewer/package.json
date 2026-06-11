@@ -1,0 +1,27 @@
+{
+  "name": "kerala-master-plan-viewer",
+  "version": "1.0.0",
+  "description": "Kerala Master Plan Viewer - Interactive georeferenced development plans for all Kerala cities",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . -l 3000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Chindugrey/keralafirst-cities.git"
+  },
+  "keywords": [
+    "kerala",
+    "master-plan",
+    "gis",
+    "openlayers",
+    "urban-planning",
+    "kerala-first"
+  ],
+  "author": "Kerala First",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
