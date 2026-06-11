@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerala Master Plan - Georeferencing Tool</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #16213e;
+            padding: 15px 25px;
+            border-bottom: 1px solid #0f3460;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 1.2rem;
+            color: #e94560;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        select, button, input {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 1px solid #0f3460;
+            background: #0f3460;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #e94560;
+            border-color: #e94560;
+        }
+        button.primary {
+            background: #e94560;
+            border-color: #e94560;
+            font-weight: bold;
+        }
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .map-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0a;
+            cursor: crosshair;
+        }
+        .map-container img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .sidebar {
+            width: 350px;
+            background: #16213e;
+            border-left: 1px solid #0f3460;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .panel {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .panel h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .gcp-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .gcp-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #16213e;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .gcp-item .coords {
+            font-family: monospace;
+            color: #aaa;
+        }
+        .gcp-item .remove {
+            color: #e94560;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .input-group input {
+            width: 100%;
+        }
+        .instructions {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #aaa;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        .marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e94560;
+            border: 3px solid white;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+        .marker::after {
+            content: attr(data-index);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e94560;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .preview-map {
+            width: 100%;
+            height: 200px;
+            background: #0a0a0a;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+        .status.success {
+            background: #1a472a;
+            color: #4ade80;
+        }
+        .status.error {
+            background: #4a1a1a;
+            color: #f87171;
+        }
+        .status.info {
+            background: #1a3a4a;
+            color: #60a5fa;
+        }
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 100;
+        }
+        .zoom-controls button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hidden {
+            display: none;
+        }
+        .landmark-input {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .landmark-input input {
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+            border-bottom: 1px solid #16213e;
+        }
+        th {
+            color: #e94560;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🗺️ Kerala Master Plan - Georeferencing Tool</h1>
+        <div class="controls">
+            <select id="citySelect">
+                <option value="">Select City...</option>
+                <option value="thiruvananthapuram">Thiruvananthapuram</option>
+                <option value="kochi">Kochi</option>
+                <option value="kozhikode">Kozhikode</option>
+            </select>
+            <button onclick="loadMap()">Load Map</button>
+            <button onclick="exportGCP()" class="primary">Export GCP CSV</button>
+            <button onclick="clearPoints()">Clear All</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="map-container" id="mapContainer">
+            <div class="instructions" id="instructions">
+                <h2>Welcome to the Georeferencing Tool</h2>
+                <ol>
+                    <li>Select a city from the dropdown above</li>
+                    <li>Click "Load Map" to display the extracted map page</li>
+                    <li>Click on the map image to place a control point</li>
+                    <li>Enter the real-world coordinates (latitude/longitude) for that point</li>
+                    <li>Add at least 10-15 points spread across the entire map</li>
+                    <li>Click "Export GCP CSV" to save the control points</li>
+                    <li>Use the exported CSV with the georeferencing pipeline</li>
+                </ol>
+                <p style="margin-top: 20px;"><strong>Tip:</strong> Use Google Maps or OpenStreetMap to find accurate coordinates for landmarks.</p>
+                <p><strong>Good landmarks:</strong> Railway stations, temples, bridges, major intersections, government buildings</p>
+            </div>
+            <img id="mapImage" src="" alt="Map" class="hidden">
+            <div id="markersContainer"></div>
+            <div class="zoom-controls">
+                <button onclick="zoomIn()">+</button>
+                <button onclick="zoomOut()">−</button>
+                <button onclick="resetZoom()">⟲</button>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="panel">
+                <h3>🎯 Add Control Point</h3>
+                <div class="input-group">
+                    <label>Pixel X (on map image)</label>
+                    <input type="number" id="pixelX" placeholder="Click on map to set" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Pixel Y (on map image)</label>
+                    <input type="number" id="pixelY" placeholder="Click on map to set" readonly>
+                </div>
+                <div class="input-group">
+                    <label>Latitude (decimal degrees)</label>
+                    <input type="number" id="latitude" placeholder="e.g., 8.4875" step="0.0001">
+                </div>
+                <div class="input-group">
+                    <label>Longitude (decimal degrees)</label>
+                    <input type="number" id="longitude" placeholder="e.g., 76.9525" step="0.0001">
+                </div>
+                <div class="landmark-input">
+                    <input type="text" id="landmarkName" placeholder="Landmark name (optional)" style="flex: 1;">
+                    <button onclick="addPoint()" class="primary">Add Point</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>📍 Control Points (<span id="pointCount">0</span>)</h3>
+                <div class="gcp-list" id="gcpList">
+                    <p style="color: #666; text-align: center; padding: 20px;">No points added yet</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>📋 Quick Reference</h3>
+                <div class="instructions">
+                    <p><strong>Thiruvananthapuram Bounds:</strong><br>
+                    Lon: 76.80 - 77.10, Lat: 8.30 - 8.60</p>
+                    <p style="margin-top: 10px;"><strong>Kochi Bounds:</strong><br>
+                    Lon: 76.15 - 76.45, Lat: 9.85 - 10.15</p>
+                    <p style="margin-top: 10px;"><strong>Kozhikode Bounds:</strong><br>
+                    Lon: 75.65 - 75.95, Lat: 11.15 - 11.45</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>📁 Export</h3>
+                <button onclick="exportGCP()" class="primary" style="width: 100%; margin-bottom: 10px;">
+                    Download GCP CSV
+                </button>
+                <button onclick="exportInstructions()" style="width: 100%;">
+                    Download Instructions
+                </button>
+                <div id="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCity = '';
+        let points = [];
+        let zoom = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX, startY;
+
+        const cityMaps = {
+            thiruvananthapuram: 'data-processing/map-pages/thiruvananthapuram/thiruvananthapuram_page_008.png',
+            kochi: 'data-processing/map-pages/kochi/kochi_page_008.png',
+            kozhikode: 'data-processing/map-pages/kozhikode/kozhikode_page_009.png'
+        };
+
+        const cityBounds = {
+            thiruvananthapuram: { minLon: 76.80, maxLon: 77.10, minLat: 8.30, maxLat: 8.60 },
+            kochi: { minLon: 76.15, maxLon: 76.45, minLat: 9.85, maxLat: 10.15 },
+            kozhikode: { minLon: 75.65, maxLon: 75.95, minLat: 11.15, maxLat: 11.45 }
+        };
+
+        function loadMap() {
+            const city = document.getElementById('citySelect').value;
+            if (!city) {
+                showStatus('Please select a city first', 'error');
+                return;
+            }
+
+            currentCity = city;
+            const mapPath = cityMaps[city];
+            const mapImage = document.getElementById('mapImage');
+            const instructions = document.getElementById('instructions');
+
+            mapImage.src = mapPath;
+            mapImage.classList.remove('hidden');
+            instructions.classList.add('hidden');
+
+            // Reset zoom and pan
+            zoom = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+
+            showStatus(`Loaded ${city} map. Click on the image to add control points.`, 'success');
+        }
+
+        document.getElementById('mapContainer').addEventListener('click', function(e) {
+            if (e.target.id === 'mapImage' || e.target.closest('.zoom-controls')) {
+                return;
+            }
+
+            const mapImage = document.getElementById('mapImage');
+            if (!mapImage.src || mapImage.classList.contains('hidden')) {
+                return;
+            }
+
+            const rect = mapImage.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / zoom;
+            const y = (e.clientY - rect.top) / zoom;
+
+            // Get actual image dimensions
+            const imgWidth = mapImage.naturalWidth;
+            const imgHeight = mapImage.naturalHeight;
+
+            // Calculate pixel coordinates on original image
+            const pixelX = Math.round((x / rect.width) * imgWidth);
+            const pixelY = Math.round((y / rect.height) * imgHeight);
+
+            document.getElementById('pixelX').value = pixelX;
+            document.getElementById('pixelY').value = pixelY;
+
+            // Show preview
+            showStatus(`Clicked at pixel: ${pixelX}, ${pixelY}`, 'info');
+        });
+
+        function addPoint() {
+            const pixelX = parseFloat(document.getElementById('pixelX').value);
+            const pixelY = parseFloat(document.getElementById('pixelY').value);
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lon = parseFloat(document.getElementById('longitude').value);
+            const landmark = document.getElementById('landmarkName').value || `Point ${points.length + 1}`;
+
+            if (isNaN(pixelX) || isNaN(pixelY) || isNaN(lat) || isNaN(lon)) {
+                showStatus('Please fill in all coordinate fields', 'error');
+                return;
+            }
+
+            // Validate coordinates are within bounds
+            const bounds = cityBounds[currentCity];
+            if (bounds) {
+                if (lon < bounds.minLon || lon > bounds.maxLon || lat < bounds.minLat || lat > bounds.maxLat) {
+                    showStatus(`Warning: Coordinates outside expected bounds for ${currentCity}`, 'error');
+                    return;
+                }
+            }
+
+            const point = {
+                id: points.length + 1,
+                pixelX,
+                pixelY,
+                lat,
+                lon,
+                landmark
+            };
+
+            points.push(point);
+            renderPoints();
+            renderMarkers();
+            updatePointCount();
+
+            // Clear inputs
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+            document.getElementById('landmarkName').value = '';
+
+            showStatus(`Added ${landmark} at pixel (${pixelX}, ${pixelY})`, 'success');
+        }
+
+        function renderPoints() {
+            const list = document.getElementById('gcpList');
+            if (points.length === 0) {
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No points added yet</p>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th>#</th><th>Landmark</th><th>Pixel</th><th>Lat,Lon</th><th></th></tr></thead><tbody>';
+            points.forEach((p, i) => {
+                html += `<tr>
+                    <td>${p.id}</td>
+                    <td>${p.landmark}</td>
+                    <td class="coords">${p.pixelX},${p.pixelY}</td>
+                    <td class="coords">${p.lat.toFixed(4)},${p.lon.toFixed(4)}</td>
+                    <td><span class="remove" onclick="removePoint(${i})">×</span></td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            list.innerHTML = html;
+        }
+
+        function renderMarkers() {
+            const container = document.getElementById('markersContainer');
+            container.innerHTML = '';
+
+            const mapImage = document.getElementById('mapImage');
+            const rect = mapImage.getBoundingClientRect();
+            const imgWidth = mapImage.naturalWidth;
+            const imgHeight = mapImage.naturalHeight;
+
+            points.forEach(p => {
+                const marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.setAttribute('data-index', p.id);
+
+                // Calculate position on displayed image
+                const x = ((p.pixelX / imgWidth) * rect.width * zoom) + (rect.left + panX);
+                const y = ((p.pixelY / imgHeight) * rect.height * zoom) + (rect.top + panY);
+
+                marker.style.left = x + 'px';
+                marker.style.top = y + 'px';
+
+                container.appendChild(marker);
+            });
+        }
+
+        function removePoint(index) {
+            points.splice(index, 1);
+            // Re-number points
+            points.forEach((p, i) => p.id = i + 1);
+            renderPoints();
+            renderMarkers();
+            updatePointCount();
+        }
+
+        function clearPoints() {
+            points = [];
+            renderPoints();
+            renderMarkers();
+            updatePointCount();
+            showStatus('All points cleared', 'info');
+        }
+
+        function updatePointCount() {
+            document.getElementById('pointCount').textContent = points.length;
+        }
+
+        function exportGCP() {
+            if (points.length === 0) {
+                showStatus('No points to export', 'error');
+                return;
+            }
+
+            let csv = 'mapX,mapY,worldX,worldY,worldZ,landmark\n';
+            points.forEach(p => {
+                csv += `${p.pixelX},${p.pixelY},${p.lon},${p.lat},0,${p.landmark}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentCity}_gcp.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showStatus(`Exported ${points.length} points to ${currentCity}_gcp.csv`, 'success');
+        }
+
+        function exportInstructions() {
+            const instructions = `
+# Georeferencing Instructions for ${currentCity}
+
+## Control Points (${points.length} total)
+
+| # | Landmark | Pixel X | Pixel Y | Latitude | Longitude |
+|---|----------|---------|---------|----------|-----------|
+${points.map(p => `| ${p.id} | ${p.landmark} | ${p.pixelX} | ${p.pixelY} | ${p.lat} | ${p.lon} |`).join('\n')}
+
+## Next Steps
+
+1. Save this CSV file as: ${currentCity}_gcp.csv
+2. Run the georeferencing pipeline:
+   \`\`\`
+   python3 data-processing/georeference_pipeline.py --city ${currentCity} --gcp-file ${currentCity}_gcp.csv
+   \`\`\`
+3. The pipeline will create:
+   - ${currentCity}_georeferenced.tif (GeoTIFF)
+   - ${currentCity}_cog.tif (Cloud Optimized GeoTIFF)
+4. Upload the COG to Cloudflare R2
+5. Update cities.json with the URL
+
+## Validation
+
+- Minimum recommended points: 10-15
+- Points should be spread across the entire map
+- Include corners, edges, and center
+- Use easily identifiable landmarks
+            `.trim();
+
+            const blob = new Blob([instructions], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentCity}_instructions.md`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showStatus('Instructions exported', 'success');
+        }
+
+        function zoomIn() {
+            zoom *= 1.2;
+            updateTransform();
+            renderMarkers();
+        }
+
+        function zoomOut() {
+            zoom /= 1.2;
+            updateTransform();
+            renderMarkers();
+        }
+
+        function resetZoom() {
+            zoom = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+            renderMarkers();
+        }
+
+        function updateTransform() {
+            const mapImage = document.getElementById('mapImage');
+            mapImage.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${zoom})`;
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+            setTimeout(() => {
+                status.className = 'status';
+                status.textContent = '';
+            }, 5000);
+        }
+
+        // Pan functionality
+        document.getElementById('mapContainer').addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('marker')) return;
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+            document.getElementById('mapContainer').style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            updateTransform();
+            renderMarkers();
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+            document.getElementById('mapContainer').style.cursor = 'crosshair';
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Delete' || e.key === 'Backspace') {
+                if (points.length > 0) {
+                    removePoint(points.length - 1);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
