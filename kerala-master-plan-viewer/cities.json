@@ -9,9 +9,9 @@
       "zoom": 12,
       "dataSource": "official",
       "dataSourceUrl": "https://lsgd.kerala.gov.in/wp-content/uploads/2025/08/Thiruvananthapuram-City-Master-Plan.pdf",
-      "cogUrl": "",
+      "cogUrl": "https://github.com/chindugreyyy/kerala-master-plan-viewer/releases/download/v0.1.0-alpha/thiruvananthapuram_cog.tif",
       "planYear": "2021",
-      "status": "pending-georeference"
+      "status": "active"
     },
     {
       "name": "Kochi (Ernakulam / Cochin)",
@@ -22,9 +22,9 @@
       "zoom": 12,
       "dataSource": "official",
       "dataSourceUrl": "https://lsgd.kerala.gov.in/wp-content/uploads/2025/08/Kochi-City-Master-Plan.pdf",
-      "cogUrl": "",
+      "cogUrl": "https://github.com/chindugreyyy/kerala-master-plan-viewer/releases/download/v0.1.0-alpha/kochi_cog.tif",
       "planYear": "2021",
-      "status": "pending-georeference"
+      "status": "active"
     },
     {
       "name": "Kozhikode (Calicut)",
@@ -35,9 +35,9 @@
       "zoom": 12,
       "dataSource": "official",
       "dataSourceUrl": "https://lsgd.kerala.gov.in/wp-content/uploads/2025/08/Kozhikode-Master-Plan.pdf",
-      "cogUrl": "",
+      "cogUrl": "https://github.com/chindugreyyy/kerala-master-plan-viewer/releases/download/v0.1.0-alpha/kozhikode_cog.tif",
       "planYear": "2021",
-      "status": "pending-georeference"
+      "status": "active"
     },
     {
       "name": "Kollam (Quilon)",
