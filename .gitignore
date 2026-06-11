@@ -1,0 +1,24 @@
+# Large files
+data-processing/plans/*.pdf
+data-processing/extracted-pages/
+data-processing/map-pages/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Temporary
+*.tmp
+*.log
