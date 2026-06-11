@@ -253,13 +253,14 @@
       if (ct) { ct.classList.remove('no-city'); }
       
       var hasData = !!(city.cogUrl || city.xyzUrl);
+      var isOfficial = city.dataSource === 'official';
       
       // Remove any existing proxy layer
       removeProxyLayer();
       hideLegend();
 
       if (hasData) {
-        // Official plan available
+        // Official plan available with COG/XYZ
         var source;
         if (city.xyzUrl) {
           source = new ol.source.XYZ({
@@ -284,6 +285,13 @@
         cogLayer.setOpacity(parseFloat(document.getElementById('opacity-slider').value));
         cogLayer.setVisible(true);
         updateDataSourceIndicator('official', 'Official Master Plan');
+      } else if (isOfficial) {
+        // Official plan exists but not yet georeferenced
+        cogLayer.setSource(null);
+        cogLayer.setVisible(false);
+        loadProxyLayer(city);
+        updateDataSourceIndicator('official-pending', 'Official Plan (Georeferencing Pending)');
+        showNoDataToast(city.name + ' — official plan found, georeferencing in progress. Showing proxy data.');
       } else {
         // No official plan — load proxy layer
         cogLayer.setSource(null);
