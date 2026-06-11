@@ -5,7 +5,7 @@
     { "src": "/admin", "dest": "/admin.html" },
     { "src": "/admin/(.*)", "dest": "/admin.html" },
     { "src": "/", "dest": "/index.html" },
-    { "src": "/(.*\\.(json|css|js|png|jpg|ico|txt|xml|csv|md|py))", "dest": "/$1" },
+    { "src": "/(.*\\.(json|css|js|png|jpg|ico|txt|xml|csv|md|py|tif|tiff))", "dest": "/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "github": {
@@ -27,6 +27,27 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/data/(.*\\.(tif|tiff))",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, HEAD, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Range, Content-Type"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "Content-Range, Content-Length"
         }
       ]
     }
